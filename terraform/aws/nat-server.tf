@@ -1,18 +1,18 @@
 /* NAT/VPN server */
 resource "aws_instance" "nat" {
-  ami = lookup(var.aws_amis, "0")
-  instance_type = "t2.micro"
-  subnet_id = aws_subnet.public.id
-  security_groups = [aws_security_group.allow_all.id, aws_security_group.nat.id]
-  key_name = aws_key_pair.deployer.key_name
+  ami               = lookup(var.aws_amis, "0")
+  instance_type     = "t2.micro"
+  subnet_id         = aws_subnet.public.id
+  security_groups   = [aws_security_group.allow_all.id, aws_security_group.nat.id]
+  key_name          = aws_key_pair.deployer.key_name
   source_dest_check = false
   tags = {
     Name = "nat server"
   }
   connection {
-    user = "ubuntu"
+    user        = "ubuntu"
     private_key = "ssh/insecure-deployer"
-    host = self.public_ip
+    host        = self.public_ip
   }
   provisioner "remote-exec" {
     inline = [
@@ -26,5 +26,9 @@ resource "aws_instance" "nat" {
       /* Generate OpenVPN server config */
       "sudo docker run --volumes-from ovpn-data --rm gosuri/openvpn ovpn_genconfig -p ${var.vpc_cidr} -u udp://${self.public_ip}"
     ]
+  }
+  metadata_options {
+    http_endpoint = "disabled"
+    http_tokens   = "required"
   }
 }
