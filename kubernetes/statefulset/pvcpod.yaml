@@ -1,15 +1,16 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pvpod
+    name: pvpod
+    namespace: <Please provide some valid namespace name>
 spec:
-  containers:
-  - name: test-container
-    image: k8s.gcr.io/test-webserver
-    volumeMounts:
-    - name: test-volume
-      mountPath: /test-vmdk
-  volumes:
-  - name: test-volume
-    persistentVolumeClaim:
-      claimName: pvc0001
+    containers:
+        - name: test-container
+          image: k8s.gcr.io/test-webserver
+          volumeMounts:
+            - name: test-volume
+              mountPath: /test-vmdk
+    volumes:
+        - name: test-volume
+          persistentVolumeClaim:
+            claimName: pvc0001
